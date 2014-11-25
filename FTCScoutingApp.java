@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.*;
 
 
-public class ScoutingApp {
+public class FTCScoutingApp {
   public static Scanner scan = new Scanner(System.in);
   public static ArrayList<Team> lineup = new ArrayList<Team>(); // list of all FTC teams
   
