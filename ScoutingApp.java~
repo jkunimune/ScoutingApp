@@ -1,0 +1,27 @@
+import java.util.Scanner;
+import java.util.*;
+
+
+public class ScoutingApp {
+  public static Scanner scan = new Scanner(System.in);
+  public static ArrayList<Team> lineup = new ArrayList<Team>(); // list of all FTC teams
+  
+  
+  public static void main(String[] args) {
+    boolean nextMatch = true; // tells program when to exit while loop
+    do {
+      System.out.println("What teams are on the red alliance?");
+      int red1 = scan.nextInt(); // asks for each red team
+    } while (nextMatch);
+  }
+  
+  
+  public int getTeam(int teamNumber) { // returns the index of the given team.  if team is not in lineup, adds it
+    for (Team t: lineup)
+      if (t.number == teamNumber)
+        return lineup.indexOf(t);
+    
+    lineup.add(new Team(teamNumber));
+    return lineup.size()-1;
+  }
+}
