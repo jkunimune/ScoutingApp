@@ -12,6 +12,7 @@ public class Team {
   public ArrayList<Integer> teleScore = new ArrayList<Integer>();
   public ArrayList<Integer> penalty = new ArrayList<Integer>();
   public ArrayList<Team> ally = new ArrayList<Team>();
+  public ArrayList<String> comments = new ArrayList<String>();
   
   public double elevatorRank = 0;
   public double intakeRank = 0;
@@ -52,6 +53,11 @@ public class Team {
     elevatorRank = (elevatorRank + (double)elev/10) / 2;
     intakeRank = (intakeRank + (double)intake/10) / 2;
     driveRank = (driveRank + (double)drive/10) / 2;
+  }
+  
+  
+  public void comment(String newComment) {
+    comments.add(newComment);
   }
   
   
@@ -113,9 +119,14 @@ public class Team {
   }
   
   
-  public int compatibleWith(Team them) {
+  public double compatibleWith(Team them) {
     return avgScore() * (them.autoRank + this.autoRank + or(them.cascade, this.cascade) + 1) *
       (them.driveRank + this.driveRank + or(them.tubeManeuver, this.tubeManeuver) + 1) *
       (them.intakeRank*them.elevatorRank + this.intakeRank*this.elevatorRank + getBestGoal(them.highestGoal, this.highestGoal) + 1);
+  }
+  
+  
+  public String report() {
+    return "Hi.";
   }
 }
