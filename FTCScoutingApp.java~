@@ -18,15 +18,38 @@ public class FTCScoutingApp {
       Team blu1 = getTeam(scan.nextInt()); // same for blue alliance
       Team blu2 = getTeam(scan.nextInt());
       
-      System.out.println("Is team "+red1.number+" starting on the ramp or parking zone (R or P)?"); // Asks for information on teams
-      boolean r1Start = scan.nextLine().equalsIgnoreCase("R");
+      System.out.println("Is team "+red1.number+" starting on the ramp or parking zone?"); // Asks for information on teams
+      boolean r1Start = scan.nextLine().substring(0,1).equalsIgnoreCase("R");
       scan.nextLine(); // fixes the annoying thing where nextLine() skips ahead
-      System.out.println("Is team "+red2.number+" starting on the ramp or parking zone (R or P)?");
-      boolean r2Start = scan.nextLine().equalsIgnoreCase("R");
-      System.out.println("Is team "+blu1.number+" starting on the ramp or parking zone (R or P)?");
-      boolean b1Start = scan.nextLine().equalsIgnoreCase("R");
-      System.out.println("Is team "+blu2.number+" starting on the ramp or parking zone (R or P)?");
-      boolean b2Start = scan.nextLine().equalsIgnoreCase("R");
+      System.out.println("Is team "+red2.number+" starting on the ramp or parking zone?");
+      boolean r2Start = scan.nextLine().substring(0,1).equalsIgnoreCase("R");
+      System.out.println("Is team "+blu1.number+" starting on the ramp or parking zone?");
+      boolean b1Start = scan.nextLine().substring(0,1).equalsIgnoreCase("R");
+      System.out.println("Is team "+blu2.number+" starting on the ramp or parking zone?");
+      boolean b2Start = scan.nextLine().substring(0,1).equalsIgnoreCase("R");
+      
+      for (int i = 0; i < 4; i ++) {
+        Team current;
+        switch (i) {
+          case 1:   current = red1;
+            break;
+          case 2:   current = red2;
+            break;
+          case 3:   current = blu1;
+            break;
+          default:  current = blu2;
+        }
+        System.out.println("Please enter the following information about "+red1.num+".\nCascade?");
+        if (scan.nextLine().equalsIgnoreCase("yes"))
+          current.cascade();
+        System.out.println("Maneuvering tubes?");
+        if (scan.nextLine().equalsIgnoreCase("yes"))
+          current.tubeManeuver();
+        System.out.println("Highest goal scored in? (none = 0, low = 1, center = 4)");
+        current.newHighestGoal(scan.nextInt());
+        System.out.println("Rank the autonomous from 0 (non-functional) to 10 (amazing)");
+      }
+      
       System.out.println("Please enter the final score in the form Red Autonomous, Red Teleop, Red Penalty, Blue Autonomous, Blue Teleop, Blue Penalty.");
       int rAuto = scan.nextInt();
       int rTele = scan.nextInt();
@@ -34,10 +57,10 @@ public class FTCScoutingApp {
       int bAuto = scan.nextInt();
       int bTele = scan.nextInt();
       int bPen = scan.nextInt();
-      red1.tallyMatch(r1Start, rAuto, rTele, -bPen); // updates lineup based on scores
-      red2.tallyMatch(r2Start, rAuto, rTele, -bPen);
-      blu1.tallyMatch(b1Start, bAuto, bTele, -rPen);
-      blu2.tallyMatch(b2Start, bAuto, bTele, -rPen);
+      red1.tallyMatch(red2, r1Start, rAuto, rTele, -bPen); // updates lineup based on scores
+      red2.tallyMatch(red1, r2Start, rAuto, rTele, -bPen);
+      blu1.tallyMatch(blu2, b1Start, bAuto, bTele, -rPen);
+      blu2.tallyMatch(blu1, b2Start, bAuto, bTele, -rPen);
       
       System.out.println("Very well.\nIs there another match?"); // asks if it should continue
       nextMatch = scan.nextLine().equalsIgnoreCase("yes");
