@@ -52,10 +52,10 @@ public class Team {
   
   public void rank(int auto, int elev, int intake, int drive) {
     if (matchCount <= 0) {
-      autoRank = auto;
-      elevatorRank = elev;
-      intakeRank = intake;
-      driveRank = drive;
+      autoRank = (double)auto/10;
+      elevatorRank = (double)elev/10;
+      intakeRank = (double)intake/10;
+      driveRank = (double)drive/10;
     }
     else {
       autoRank = (autoRank + (double)auto/10) / 2;
@@ -142,10 +142,10 @@ public class Team {
   
   
   private int opposingStarts(boolean ramp1, boolean ramp2, boolean zone1, boolean zone2) {
-    if (!zone1 && !zone2)
-      return 0;
-    else
+    if ((ramp1 && zone2) || (ramp2 && zone1))
       return 2;
+    else
+      return 0;
   }
   
   

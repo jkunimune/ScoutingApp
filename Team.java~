@@ -28,6 +28,8 @@ public class Team {
   
   
   public Team() {}
+  
+  
   public Team(int newNum) {
     number = newNum;
   }
@@ -49,10 +51,18 @@ public class Team {
   
   
   public void rank(int auto, int elev, int intake, int drive) {
-    elevatorRank = (autoRank + (double)auto/10) / 2;
-    elevatorRank = (elevatorRank + (double)elev/10) / 2;
-    intakeRank = (intakeRank + (double)intake/10) / 2;
-    driveRank = (driveRank + (double)drive/10) / 2;
+    if (matchCount <= 0) {
+      autoRank = auto;
+      elevatorRank = elev;
+      intakeRank = intake;
+      driveRank = drive;
+    }
+    else {
+      autoRank = (autoRank + (double)auto/10) / 2;
+      elevatorRank = (elevatorRank + (double)elev/10) / 2;
+      intakeRank = (intakeRank + (double)intake/10) / 2;
+      driveRank = (driveRank + (double)drive/10) / 2;
+    }
   }
   
   
@@ -105,11 +115,37 @@ public class Team {
   }
   
   
+  public int totScore(int match) {
+    if (matchCount <= match)
+      return 0;
+    
+    return autoScore.get(match) + teleScore.get(match) - penalty.get(match);
+  }
+  
+  
+  public int weightedTotScore(int match) {
+    if (matchCount <= match)
+      return 0;
+    
+    int sum = 0;
+    
+    return autoScore.get(match) + teleScore.get(match) - penalty.get(match) - ally.get(match).avgScore()/2;
+  }
+  
+  
   private int or(boolean a, boolean b) {
     if (a || b)
       return 1;
     else
       return 0;
+  }
+  
+  
+  private int opposingStarts(boolean ramp1, boolean ramp2, boolean zone1, boolean zone2) {
+    if (!zone1 && !zone2)
+      return 0;
+    else
+      return 2;
   }
   
   
@@ -119,14 +155,79 @@ public class Team {
   }
   
   
-  public double compatibleWith(Team them) {
-    return avgScore() * (them.autoRank + this.autoRank + or(them.cascade, this.cascade) + 1) *
-      (them.driveRank + this.driveRank + or(them.tubeManeuver, this.tubeManeuver) + 1) *
-      (them.intakeRank*them.elevatorRank + this.intakeRank*this.elevatorRank + getBestGoal(them.highestGoal, this.highestGoal) + 1);
+  private int bestScore() {
+    int best = 0;
+    for (int i = 0; i < matchCount; i ++) {
+      if (totScore(i) > best)
+        best = totScore(i);
+      if (weightedTotScore(i) > best)
+        best = weightedTotScore(i);
+    }
+    return best;
+  }
+  
+  
+  public int compatibleWith(Team them) {
+    return (int)(weightedAvgScore() *
+                 (them.autoRank + this.autoRank + or(them.cascade, this.cascade) +
+                  opposingStarts(them.rampStart,this.rampStart,them.parkStart,this.parkStart) + 1) *
+                 (them.driveRank + this.driveRank + or(them.tubeManeuver, this.tubeManeuver) + 1) *
+                 (them.intakeRank*them.elevatorRank + this.intakeRank*this.elevatorRank + getBestGoal(them.highestGoal, this.highestGoal) + 1));
   }
   
   
   public String report() {
-    return "Hi.";
+    String report = "";
+    
+    if (cascade)       report += "Releases cascade.  ";
+    if (tubeManeuver)  report += "Maneuvers tubes.  ";
+    switch (highestGoal) {
+      case 1:
+        report += "Scores in low goal.  ";
+        break;
+      case 2:
+        report += "Scores in medium goal.  ";
+        break;
+      case 3:
+        report += "Scores in high goal.  ";
+        break;
+      case 4:
+        report += "Scores in center goal during endgame.  ";
+    }
+    report += "\nAutonomous   ";
+    for (int i = 0; i < autoRank; i ++)
+      report += "-";
+    report += "\nDrive Train  ";
+    for (int i = 0; i < driveRank; i ++)
+      report += "-";
+    report += "\nIntake       ";
+    for (int i = 0; i < intakeRank; i ++)
+      report += "-";
+    report += "\nElevator     ";
+    for (int i = 0; i < elevatorRank; i ++)
+      report += "-";
+    report += "\n";
+    
+    report += "Scores and estimated weighted scores:\n";
+    for (int i = bestScore()/25*25; i >=0; i -= 25) {
+      for (int j = 0; j < matchCount; j ++) {
+        if (totScore(j) >= i)
+          report += "|";
+        else
+          report += " ";
+        if (weightedTotScore(j) >= i)
+          report += "|";
+        else
+          report += " ";
+        report += " ";
+      }
+      report += "\n";
+    }
+    
+    for (String c: comments)
+      if (c.length() > 0)
+        report += c + "\n";
+    
+    return report;
   }
 }

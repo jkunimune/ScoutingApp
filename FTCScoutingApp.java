@@ -96,7 +96,8 @@ public class FTCScoutingApp {
     for (int i = lineup.get(best).compatibleWith(getTeam(7550)); i >= lineup.get(worst).compatibleWith(getTeam(7550)); i --) { // for every possible rank
       for (Team t: lineup) { // for each team
         if (t.compatibleWith(getTeam(7550)) == i) // if the team has that rank
-          System.out.println("Team " + t.number + " - " + t.compatibleWith(getTeam(7550)) + "\n" + t.report() + "\n"); // display it
+          System.out.println("Team " + t.number + " - " + t.compatibleWith(getTeam(7550))/100
+                               + "\n" + t.report() + "\n"); // display it
       }
     }
   }
